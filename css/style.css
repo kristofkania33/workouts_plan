@@ -1,0 +1,18 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+h1, h2 {
+	text-align: center;
+
+
+#excercise {
+	margin-left: 20px;
+	padding: 10px;
+}
+
+form {
+	margin-left: 20px;
+	padding: 10px;
+}
