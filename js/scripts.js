@@ -21,40 +21,51 @@ addWorkout.addEventListener('click', function() {
 	 
         excercises_set.push({"name": workout_name.value, "time": workout_time.value});
         generateSet();
-        delete excercises_set[0];
-    });
+});
 
 function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60,  10);
-        seconds = parseInt(timer % 60,  10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.text(minutes + ":" + seconds);
-
-        if (timer > 0) {
-            timer = duration;
-         }
+       //Tutaj na początek zliczany jest całkowity czas jaki trzeba poświecić na cały zestaw (czyli sumę time wszystkich ćwiczeń). 
+   var time = excercises_set.reduce(function(sum, item) {
+    return sum+item.time;
+  }, 0);
+   //ustawmy, które ćwiczenie obsługujemy aktualnie. Domyślnie startujemy od peirwszego.
+   var present_workout = 0;
    
-        
-    }, excercises_set[0].time);
-    
+   //zmienna bedzie przechowywala ile czasu jeszcze zosotalo do zakonczenia cwiczenia
+   var time_left = excercises_set[0].time;
+   
+   //teraz zróbmy sobię funkcję, która będzie się odpalała co sekundę
+   function update() {
+     if(time == 0) { //jesli calkowity czas sie skonczyl, to 
+      clearInterval(timer); //wyczyść interval
+      return false;  //przerwij funkcję
+     }
+     if(time_left == 0) {
+       //cwiczenie sie skonczylo
+       present_workout++; //wybieramy kolejny workout z listy. Mozemy nizej dac informacje na stronie ,ze zaczynamy exercise_set[present_workout].name
+       time_left = excercises_set[present_workout].time; //ustawiamy czas z nowego cwiczenia
+     } else {
+       time_left--;
+       time--;
+       //zaktualizuj informacje na stronie
+     }
+   }
+
+   var timer = setInterval(update,1000);
 }
 
 
-
-
-
-create_workout_set.addEventListener('click',function() {
+create_workout_set.addEventListener('click', function() {
 	if (excercises.length == 0) {
 		set_workout.style.display = 'block';
 	}
 	else {
 		set_workout.style.display = 'none';
+		startTimer(time, display);
 		var display = $('#show_time');
-		startTimer(excercises_set[0].time, display);
+        var time = excercises_set.reduce(function(sum, item) {
+        return sum+item.time;
+        }, 0);
 	}
+	
 });

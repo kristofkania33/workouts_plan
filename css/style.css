@@ -7,12 +7,20 @@ h1, h2 {
 	text-align: center;
 
 
-#excercise {
-	margin-left: 20px;
+table {
+	margin: 20px;
 	padding: 10px;
 }
 
 form {
 	margin-left: 20px;
 	padding: 10px;
+}
+
+tr, td {
+	height: 50px;
+	text-align: center;
+	color: red;
+	border: 1px solid #000;
+	border-collapse: collapse;
 }
