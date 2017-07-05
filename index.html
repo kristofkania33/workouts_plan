@@ -7,24 +7,25 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 <body>
+  <div class="container">
      <h1>Witaj w kreatorze treningów</h1>
      <h2>Zestaw ćwiczeń</h2>
      <p id="show_time"></p>
+     <p id="first_workout"></p>
      <form id="set_workout">
        <p>Nowe ćwiczenie</p>
        <input type="name" name="training" id="workout_name">
-       <p>Podaj czas trwania ćwiczenia w minutach</p>
-       <input type="text" name="training" id="workout_time">
-       <button type="submit" id="addWorkout">Dodaj ćwiczenie</button>
+       <p>Podaj czas trwania ćwiczenia.</p>
+       <input type="number" name="training" id="workout_time">
+       <button type="button" id="addWorkout">Dodaj ćwiczenie</button>
     </form>
-    <button type="submit" id="create_workout_set">Wygeneruj zestaw</button>
+    <button type="button" id="create_workout_set">Wygeneruj zestaw</button>
      <table>
-        <tr>
+        <tr id="excercises">
            <td>Twoje ćwiczenie</td>
         </tr>
-        <tr id="excercises">
-        </tr>
-    </table>
+     </table>
+  </div>
   <script type="text/javascript" src="js/scripts.js"></script>
 </body>
 </html>
