@@ -1,94 +1,138 @@
+//assign dom objects to variables
+
 var addWorkout = document.getElementById('addWorkout'),
     workout_name = document.getElementById('workout_name'),
     workout_time = document.getElementById('workout_time'),
     first_workout = document.getElementById('first_workout'),
     show_time = document.getElementById('show_time'),
-    excercises = document.getElementById('excercises');
-
-var excercises_set = [];
-var create_workout_set = document.getElementById('create_workout_set'),
+    excercises = document.getElementById('excercises'),
+    create_workout_set = document.getElementById('create_workout_set'),
     set_workout = document.getElementById('set_workout');
 
+//create empty set of exercises
+
+var excercises_set = [];
+
+/* FUNCTIONS */
+
+//funtion for generating workout list from exercises array
+
 function generateSet() {
-	    excercises.innerHTML = "";
-	    excercises_set.map(function(item) {
-        var excercise1 = document.createElement("tr");
-        //console.log(excercise1);
-        excercise1.innerText = 'Trening: ' + item.name + ' - czas trwania: ' + item.time;
-        excercises.appendChild(excercise1);
+	
+	//empty excersises DOM container
+	excercises.innerHTML = "";
+	
+	//add single workouts to DOM table
+	excercises_set.map(function(item) {
+		
+       		var excercise1 = document.createElement("tr"); //create row
+		var column = document.createElement("td"); //create one column
+		
+       		column.innerText = 'Trening: ' + item.name + ' - czas trwania: ' + item.time + '';
+		
+		excercise1.appendChild(column);
+        	excercises.appendChild(excercise1);
+		
         });
 }
   
+//function for running a workout session
 
-addWorkout.addEventListener('click', function() {
-	 
-        excercises_set.push({name: workout_name.value, time: workout_time.value});
-        generateSet();
-});
-
-function startTimer(duration, display) {
-       //Tutaj na początek zliczany jest całkowity czas jaki trzeba poświecić na cały zestaw (czyli sumę time wszystkich ćwiczeń). 
+function startTimer() {
+      
+   //count time needed for completing whole session	
    var time = excercises_set.reduce(function(sum, item) {
-    return sum + Number(item.time);
-}, 0);
+    	return sum + Number(item.time);
+   }, 0);
 
-   //ustawmy, które ćwiczenie obsługujemy aktualnie. Domyślnie startujemy od peirwszego.
+   //set present workout to the first workout from the array
    var present_workout = 0;
    
-   //zmienna bedzie przechowywala ile czasu jeszcze zosotalo do zakonczenia cwiczenia
+   //get time needed for completing the first workout
    var time_left = excercises_set[0].time;
-   
-   
-   //teraz zróbmy sobię funkcję, która będzie się odpalała co sekundę
+     
+   //update counter	
    function update() {
-     if(time == 0) { //jesli calkowity czas sie skonczyl, to 
-      clearInterval(timer); //wyczyść interval
-      //return false;  //przerwij funkcję
-      set_workout.style.display = 'block';
-      addWorkout.style.display = 'block';
-	  workout_name.style.display = 'block';
-	  workout_time.style.display = 'block';
-	  create_workout_set.style.display = 'block';
-      excercises_set = [];
-      excercises.innerText = '';
-      show_time.innerText = 'Gratulacje. Trening zakończony. Twoja forma rosnie!';
-      first_workout.innerText = 'Stworzysz nowy zestaw ?'
+	   
+     if(time === 0) { //if time has runned out
+      
+	     clearInterval(timer); //stop interval
+	     
+	     //set html elements
+  	     set_workout.style.display = 'block';
+     	     addWorkout.style.display = 'block';
+	     workout_name.style.display = 'block';
+	     workout_time.style.display = 'block';
+	     create_workout_set.style.display = 'block';
+             show_time.innerText = 'Gratulacje. Trening zakończony. Twoja forma rosnie!';
+     	     first_workout.innerText = 'Stworzysz nowy zestaw ?'
+	     
+	     //empty exercises array
+             excercises_set = [];
+	     generateSet(); //regenerate HTML view
+      
      }
-     if(time_left == 0) {
-       //cwiczenie sie skonczylo
-       present_workout++; //wybieramy kolejny workout z listy. Mozemy nizej dac informacje na stronie ,ze zaczynamy exercise_set[present_workout].name
-       time_left = excercises_set[present_workout].time; //ustawiamy czas z nowego cwiczenia
+     else if(time_left === 0) { //workout time has ended
+   	
+		present_workout++; //pointer for new workout from the list
+      		if(excercises_set[present_workout]) {
+			 time_left = excercises_set[present_workout].time; //calculate time for new workout
+		}
+	    	else {
+			clearInterval(timer); //stop interval
+			alert('Error!');
+			return false;
+		}
+      
      } else {
-       first_workout.innerText = 'Twoje cwiczenie: >>' + excercises_set[present_workout].name + '<<';
-       show_time.innerText = 'Czas start: >> ' + excercises_set[present_workout].time + ' !   <<  Odliczamy!';
-       excercises_set[present_workout].time --
-       time_left--;
-       time--;
-       //zaktualizuje informacje na stronie
+	     
+	     	//update workut info
+       		first_workout.innerText = 'Twoje cwiczenie: >>' + excercises_set[present_workout].name + '<<';
+      		show_time.innerText = 'Czas start: >> ' + excercises_set[present_workout].time + ' !   <<  Odliczamy!';
+	     
+	     	//update time needed for completing workout
+      		time_left--;
+      		time--;
      }
    }
    
 
-   var timer = setInterval(update,1000);
+   var timer = setInterval(update,1000); //set interval (update status every second)
 }
 
 
+/* EVENT LISTENERS */
+
+//addWorkout click event -> click to add workout
+
+addWorkout.addEventListener('click', function() {
+	 
+	//w tym miejscu powinieneś jeszcze sprawdzić, czy workout_time jest rzeczywiście liczbą 
+	//i jeśli nie, to spróbować skonwertować ją do liczby. Jeśli sie nie uda, to warto wysweitlić błąd
+	
+	//push new workout to array
+        excercises_set.push({name: workout_name.value, time: workout_time.value});
+	
+	//regenerate HTML view
+        generateSet();
+});
+
+//createWorkoutSet click event -> click to start session
 
 create_workout_set.addEventListener('click', function() {
-	if (excercises.length == 0) {
-		//set_workout.style.display = 'block';
+	
+	if (excercises.length == 0) { //if there are no exercises
+		
 		addWorkout.style.display = 'block';
 		workout_name.style.display = 'block';
 		workout_time.style.display = 'block';
+		
 	}
-	else {
+	else { 
+		
 		set_workout.style.display = 'none';
 		create_workout_set.style.display ='none';
-		startTimer(time,display);
-		var display = $('#show_time');
-        var time = excercises_set.reduce(function(sum, item) {
-        return sum+Number(item.time);
-       }, 0);
+		startTimer();	
 	}
 	
 });
